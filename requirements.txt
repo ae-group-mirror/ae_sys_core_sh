@@ -1,1 +1,4 @@
+ae_system
+ae_core
+ae_console
 ae_sys_core     # including ae_core and ae_console
