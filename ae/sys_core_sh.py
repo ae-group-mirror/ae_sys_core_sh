@@ -30,14 +30,13 @@ from abc import ABCMeta, abstractmethod
 # noinspection StandardLibraryXml
 from xml.etree.ElementTree import XMLParser, ParseError
 
-from ae.system import DATE_ISO                                                                      # type: ignore
-from ae.core import (                                                                               # type: ignore
-    DEBUG_LEVEL_DISABLED, DEBUG_LEVEL_VERBOSE, DEF_ENCODE_ERRORS, po, round_traditional)
+from ae.base import DATE_ISO, DEF_ENCODE_ERRORS, round_traditional                                  # type: ignore
+from ae.core import DEBUG_LEVEL_DISABLED, DEBUG_LEVEL_VERBOSE, po                                   # type: ignore
 from ae.console import ConsoleApp                                                                   # type: ignore
 from ae.sys_core import SystemConnectorBase                                                         # type: ignore
 
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 
 
 SDI_SH = 'Sh'                               #: Sihot System Interface Id
