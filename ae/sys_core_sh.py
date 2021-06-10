@@ -36,7 +36,7 @@ from ae.console import ConsoleApp                                               
 from ae.sys_core import SystemConnectorBase                                                         # type: ignore
 
 
-__version__ = '0.1.4'
+__version__ = '0.2.4'
 
 
 SDI_SH = 'Sh'                               #: Sihot System Interface Id
