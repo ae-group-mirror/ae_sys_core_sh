@@ -5,7 +5,7 @@ SiHOT PMS system core xml interface
 This portion is very old and needs refactoring and much more unit tests.
 
 The classes provided by this portion are allowing the implementation of client
-and server components for to communicate with the Sihot PMS system.
+and server components to communicate with the Sihot PMS system.
 
 TODO:
     - use other xml library because xml.etree the xml modules in the Python standard library are not secure
@@ -36,7 +36,7 @@ from ae.console import ConsoleApp                                               
 from ae.sys_core import SystemConnectorBase                                                         # type: ignore
 
 
-__version__ = '0.2.4'
+__version__ = '0.2.5'
 
 
 SDI_SH = 'Sh'                               #: Sihot System Interface Id
@@ -67,7 +67,7 @@ SDF_SH_RES_MAP = 'shMapRes'
 # .. 'charmap' codec can't decode byte 0x90 in position 2: character maps to <undefined>
 # then added an output type handler to the connection (see db_core.py) which did not solve the problem (because
 # .. the db_core.py module is not using this default encoding but the one in NLS_LANG env var
-# For to fix showing umlaut character correctly tried cp1252 (windows charset)
+# to fix showing umlaut character correctly tried cp1252 (windows charset)
 # .. and finally this worked for all characters (because it has less undefined code points_import)
 # SXML_DEF_ENCODING = 'cp1252'
 # But with the added errors=DEF_ENCODE_ERRORS argument for the bytes() new/call used in the
@@ -171,7 +171,7 @@ class _SihotTcpClient:
 
 
 class RequestXmlHandler(socketserver.BaseRequestHandler, metaclass=ABCMeta):
-    """ server component base class for to receive xml data from the Sihot system. """
+    """ server component base class to receive xml data from the Sihot system. """
     error_message = ""
 
     # def setup(self):
@@ -217,7 +217,7 @@ class _ThreadedServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 class TcpServer:
-    """ tcp server class for to process xml sent by the Sihot client. """
+    """ tcp server class to process xml sent by the Sihot client. """
     def __init__(self, ip, port, cls_xml_handler, debug_level=DEBUG_LEVEL_DISABLED):
         self.debug_level = debug_level
         # cls_xml_handler is a RequestXmlHandler subclass with an overridden handle_xml() method
@@ -240,7 +240,7 @@ class TcpServer:
     def run(self, display_animation: bool = False):
         """ run/start the server.
 
-        :param display_animation:   pass True for to display progress animation at console output.
+        :param display_animation:   pass True to display progress animation at console output.
         """
         try:
             sleep_time = 0.5 / len(_DEBUG_RUNNING_CHARS)
@@ -261,7 +261,7 @@ class TcpServer:
 # XML PARSER ##############################################################################
 
 class SihotXmlParser:
-    """ XMLParser interface used by client for to parse the responses from the Sihot server.
+    """ XMLParser interface used by client to parse the responses from the Sihot server.
     """
     def __init__(self, cae: ConsoleApp):
         self._xml = ''
@@ -330,7 +330,7 @@ class SihotXmlParser:
         # collect extra info on error response (RC != '0') within the MSG tag field
         if tag[:4] in ('MSG-', "INDE", "VALU"):
             self._curr_attr = 'msg'
-            # Q&D: by simply using tag[4:] for to remove MSG- prefix, INDEX will be shown as X= and VALUE as E=
+            # Q&D: by simply using tag[4:] to remove MSG- prefix, INDEX will be shown as X= and VALUE as E=
             setattr(self, self._curr_attr, getattr(self, self._curr_attr, '') + " " + tag[4:] + "=")
             return None
         return tag
@@ -356,7 +356,7 @@ class SihotXmlParser:
         self.cae.dpo("SihotXmlParser.end():", self._elem_path)
         self._curr_tag = ''
         self._curr_attr = ''
-        if self._elem_path:     # Q&D Fix for TestGuestSearch for to prevent pop() on empty _elem_path list
+        if self._elem_path:     # Q&D Fix for TestGuestSearch to prevent pop() on empty _elem_path list
             self._elem_path.pop()
         return tag
 
@@ -407,12 +407,12 @@ class Request(SihotXmlParser):
 
 
 class RoomChange(SihotXmlParser):
-    """ xml parser for to process Sihot server room change notifications. """
+    """ xml parser to process Sihot server room change notifications. """
     def __init__(self, cae: ConsoleApp):
         super().__init__(cae)
         # add base tags for room/GDS number, old room/GDS number and guest objid
         self._base_tags.append('HN')
-        self.hn = None  # added for to remove pycharm warning
+        self.hn = None  # added to remove pycharm warning
         self._base_tags.append('RN')
         self.rn = None
         self._base_tags.append('ORN')
@@ -427,16 +427,16 @@ class RoomChange(SihotXmlParser):
         self.osub_nr = None
         self._base_tags.append('GID')       # Sihot guest object id
         self.gid = None
-        self._base_tags.append('MC')        # ae:05-12-2018 - added for to detect and suppress rental reservations
+        self._base_tags.append('MC')        # ae:05-12-2018 - added to detect and suppress rental reservations
         self.mc = None
 
 
 class ResChange(SihotXmlParser):
-    """ xml parser for to process Sihot server reservation change notifications. """
+    """ xml parser to process Sihot server reservation change notifications. """
     def __init__(self, cae: ConsoleApp):
         super().__init__(cae)
         self._base_tags.append('HN')    # def hotel ID as base tag, because is outside of 1st SIHOT-Reservation block
-        self.hn = None                  # added instance var for to remove pycharm warning
+        self.hn = None                  # added instance var to remove pycharm warning
         self.rgr_list: List[Dict[str, Any]] = list()
 
     def start(self, tag: str, attrib: Dict[str, str]) -> None:
@@ -460,7 +460,7 @@ class ResChange(SihotXmlParser):
 
         self.cae.dpo("ResChange.data():", self._elem_path, self.rgr_list)
 
-        append = True                           # flag for to detect and prevent multiple values
+        append = True                           # flag to detect and prevent multiple values
         # because data can be sent in chunks on parsing, we first determine the dictionary (dic) and the item key (key)
         # rgr/reservation group elements
         if self._curr_tag == 'RNO':
@@ -569,9 +569,9 @@ class CatRoomResponse(SihotXmlParser):
         super().__init__(cae)
         # ALLROOMS response of the WEB interface
         self._base_tags += ('NAME', 'RN')
-        self.name = None  # added for to remove pycharm warning
+        self.name = None  # added to remove pycharm warning
         self.rn = None
-        self.cat_rooms: Dict[str, List[str]] = dict()  # for to store the dict with all key values
+        self.cat_rooms: Dict[str, List[str]] = dict()  # to store the dict with all key values
 
     def end(self, tag):
         """ parser detected end tag of element. """
@@ -586,14 +586,14 @@ class CatRoomResponse(SihotXmlParser):
 
 
 class ConfigDictResponse(SihotXmlParser):
-    """ parser for to process Sihot configuration setting responses. """
+    """ parser to process Sihot configuration setting responses. """
     def __init__(self, cae: ConsoleApp):
         super().__init__(cae)
         # response to GCF operation code of the WEB interface
         self._base_tags += ('KEY', 'VALUE')  # VALUE for key value (remove from additional error info - see 'VALU')
-        self.value = ''  # added for to remove pycharm warning
+        self.value = ''  # added to remove pycharm warning
         self.key = ''
-        self.key_values: Dict[str, str] = dict()  # for to store the dict with all key values
+        self.key_values: Dict[str, str] = dict()  # to store the dict with all key values
 
     def end(self, tag: str) -> Optional[str]:
         """ parser detected end tag of Sihot config element. """
@@ -623,14 +623,14 @@ class ResKernelResponse(SihotXmlParser):
 
 
 class SihotXmlBuilder:
-    """ generic class for to build and send Sihot xml requests. """
+    """ generic class to build and send Sihot xml requests. """
     tn: str = '1'
 
     def __init__(self, cae: ConsoleApp, use_kernel: bool = False):
         """ create an instance of this class.
 
         :param cae:             instance of the running :class:`~ae.console.ConsoleApp` app.
-        :param use_kernel:      pass True for to use the Sihot kernel interface (False==use Sihot sxml interface).
+        :param use_kernel:      pass True to use the Sihot kernel interface (False==use Sihot sxml interface).
         """
         self.cae = cae
         self.debug_level = cae.get_opt('debug_level')
@@ -678,7 +678,7 @@ class SihotXmlBuilder:
     def send_to_server(self, response_parser: Optional['SihotXmlParser'] = None) -> str:
         """ send the built xml request to the Sihot server.
 
-        :param response_parser:     used parser for to parse the response from the Sihot server (def=SihotXmlParser).
+        :param response_parser:     used parser to parse the response from the Sihot server (def=SihotXmlParser).
         :return:                    error string or empty string if no errors occurred.
         """
         stc = _SihotTcpClient(self.cae.get_opt(SDF_SH_SERVER_ADDRESS),
@@ -712,8 +712,8 @@ class SihotXmlBuilder:
 
         :param tag:         tag of the new xml element.
         :param val:         value of the new xml element.
-        :param opening:     pass False for to NOT add the element opening tag.
-        :param closing:     pass False for to NOT add the element closing tag.
+        :param opening:     pass False to NOT add the element opening tag.
+        :param closing:     pass False to NOT add the element closing tag.
         :return:            new xml element or element part/fragment.
         """
         return \
@@ -752,14 +752,14 @@ class SihotXmlBuilder:
 
 
 class AvailCatInfo(SihotXmlBuilder):
-    """ build xml request and send it for to get available room categories from the Sihot server. """
+    """ build xml request and send it to get available room categories from the Sihot server. """
     def avail_rooms(self, hotel_id: str = '', room_cat: str = '',
                     from_date: datetime.date = datetime.date.today(), to_date: datetime.date = datetime.date.today()
                     ) -> Union[dict, str]:
         """ determine available rooms for the specified hotel, room category and date range.
 
-        :param hotel_id:        Sihot hotel id or empty string for to get available rooms of all hotels.
-        :param room_cat:        Sihot room category or empty string for to get available rooms of all categories.
+        :param hotel_id:        Sihot hotel id or empty string to get available rooms of all hotels.
+        :param room_cat:        Sihot room category or empty string to get available rooms of all categories.
         :param from_date:       start date of the date range: defaulting to today.
         :param to_date:         end date of the date range; defaulting to today.
         :return:                Sihot response as dict created by :class:`.AvailCatInfoResponse` with the results
@@ -792,10 +792,10 @@ class CatRooms(SihotXmlBuilder):
                       scope: str = '') -> Union[dict, str]:
         """ determine configured room categories of the Sihot system for the specified hotel and date range.
 
-        :param hotel_id:        Sihot hotel id for to get the room categories.
+        :param hotel_id:        Sihot hotel id to get the room categories.
         :param from_date:       start date of the date range: defaulting to today.
         :param to_date:         end date of the date range; defaulting to today.
-        :param scope:           scope string for to request additional information - see Sihot documentation.
+        :param scope:           scope string to request additional information - see Sihot documentation.
         :return:                Sihot response as dict created by :class:`.CatRoomResponse` with the results
                                 or an error message string if an error occurred.
         """
@@ -804,7 +804,7 @@ class CatRooms(SihotXmlBuilder):
         self.add_tag('FROM', datetime.date.strftime(from_date, DATE_ISO))  # mandatory
         self.add_tag('TO', datetime.date.strftime(to_date, DATE_ISO))
         if scope:
-            self.add_tag('SCOPE', scope)  # pass 'DESC' for to get room description
+            self.add_tag('SCOPE', scope)  # pass 'DESC' to get room description
         self.end_xml()
 
         err_msg = self.send_to_server(response_parser=CatRoomResponse(self.cae))
@@ -821,7 +821,7 @@ class ConfigDict(SihotXmlBuilder):
         """ determine a configuration setting of the Sihot system for the specified hotel and language.
 
         :param config_type:     Sihot config setting type - see Sihot documentation.
-        :param hotel_id:        Sihot hotel id for to get the configuration setting.
+        :param hotel_id:        Sihot hotel id to get the configuration setting.
         :param language:        language id for the configuration description texts - see Sihot documentation.
         :return:                Sihot response as dict created by :class:`.ConfigDictResponse` with the results
                                 or an error message string if an error occurred.
@@ -841,9 +841,9 @@ class ConfigDict(SihotXmlBuilder):
 
 
 class PostMessage(SihotXmlBuilder):
-    """ build and send request for to add a message into the Sihot system message/notification queue. """
+    """ build and send request to add a message into the Sihot system message/notification queue. """
     def post_message(self, msg: str, level: int = 3, system: str = 'sys_core_sh_module') -> str:
-        """ build and send request for to add a message into the Sihot system message/notification queue.
+        """ build and send request to add a message into the Sihot system message/notification queue.
 
         :param msg:             message text string to add to the Sihot system messages.
         :param level:           importance level.
