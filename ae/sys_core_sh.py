@@ -36,7 +36,7 @@ from ae.console import ConsoleApp                                               
 from ae.sys_core import SystemConnectorBase                                                         # type: ignore
 
 
-__version__ = '0.2.5'
+__version__ = '0.3.5'
 
 
 SDI_SH = 'Sh'                               #: Sihot System Interface Id
@@ -269,7 +269,7 @@ class SihotXmlParser:
                            'MATCHCODE', 'OBJID']
         self._curr_tag = ''
         self._curr_attr = ''
-        self._elem_path: List[str] = list()    # element path implemented as list stack
+        self._elem_path: List[str] = []    # element path implemented as list stack
 
         # main xml elements/items
         self.oc = ''
@@ -293,7 +293,7 @@ class SihotXmlParser:
         self.cae.dpo("SihotXmlParser.parse_xml():", xml)
         self._xml = xml
         # noinspection PyTypeChecker
-        self._parser = XMLParser(target=self)       # type: ignore
+        self._parser = XMLParser(target=self)
         try:
             self._parser.feed(xml)
         except ParseError:
@@ -437,7 +437,7 @@ class ResChange(SihotXmlParser):
         super().__init__(cae)
         self._base_tags.append('HN')    # def hotel ID as base tag, because is outside of 1st SIHOT-Reservation block
         self.hn = None                  # added instance var to remove pycharm warning
-        self.rgr_list: List[Dict[str, Any]] = list()
+        self.rgr_list: List[Dict[str, Any]] = []
 
     def start(self, tag: str, attrib: Dict[str, str]) -> None:
         """ parser detected start tag of next/new xml element; called for each opening tag. """
@@ -447,9 +447,9 @@ class ResChange(SihotXmlParser):
         self.cae.dpo("ResChange.start():", self._elem_path)
 
         if tag == 'SIHOT-Reservation':
-            self.rgr_list.append(dict(rgr_ho_fk=self.hn, ResPersons=list()))
+            self.rgr_list.append(dict(rgr_ho_fk=self.hn, ResPersons=[]))
         elif tag in ('FIRST-Person', 'SIHOT-Person'):       # FIRST-Person only seen in room change (CI) on first occ
-            self.rgr_list[-1]['ResPersons'].append(dict())
+            self.rgr_list[-1]['ResPersons'].append({})
 
         return None
 
@@ -542,17 +542,17 @@ class AvailCatInfoResponse(SihotXmlParser):
         super().__init__(cae)
         self._curr_cat = ''
         self._curr_day = ''
-        self.avail_room_cats: Dict[str, Dict[str, Any]] = dict()
+        self.avail_room_cats: Dict[str, Dict[str, Any]] = {}
 
     def data(self, data: str) -> Optional[str]:
         """ process parsed element data chunk. """
         if super().data(data) is None:
             return None
         if self._curr_tag == 'CAT':
-            self.avail_room_cats[data] = dict()
+            self.avail_room_cats[data] = {}
             self._curr_cat = data
         elif self._curr_tag == 'D':
-            self.avail_room_cats[self._curr_cat][data] = dict()
+            self.avail_room_cats[self._curr_cat][data] = {}
             self._curr_day = data
         elif self._curr_tag in ('TOTAL', 'OOO'):
             self.avail_room_cats[self._curr_cat][self._curr_day][self._curr_tag] = int(data)
@@ -571,7 +571,7 @@ class CatRoomResponse(SihotXmlParser):
         self._base_tags += ('NAME', 'RN')
         self.name = None  # added to remove pycharm warning
         self.rn = None
-        self.cat_rooms: Dict[str, List[str]] = dict()  # to store the dict with all key values
+        self.cat_rooms: Dict[str, List[str]] = {}  # to store the dict with all key values
 
     def end(self, tag):
         """ parser detected end tag of element. """
@@ -579,7 +579,7 @@ class CatRoomResponse(SihotXmlParser):
             return None  # tag used/processed by base class
 
         if tag == 'NAME':
-            self.cat_rooms[self.name] = list()
+            self.cat_rooms[self.name] = []
         elif tag == 'RN':
             self.cat_rooms[self.name].append(self.rn)
         return tag
@@ -593,7 +593,7 @@ class ConfigDictResponse(SihotXmlParser):
         self._base_tags += ('KEY', 'VALUE')  # VALUE for key value (remove from additional error info - see 'VALU')
         self.value = ''  # added to remove pycharm warning
         self.key = ''
-        self.key_values: Dict[str, str] = dict()  # to store the dict with all key values
+        self.key_values: Dict[str, str] = {}  # to store the dict with all key values
 
     def end(self, tag: str) -> Optional[str]:
         """ parser detected end tag of Sihot config element. """
