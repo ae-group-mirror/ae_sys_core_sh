@@ -1,12 +1,12 @@
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae V0.2.85 -->
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev_tpl_namespace_root V0.3.6 -->
-# sys_core_sh 0.3.5
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae V0.3.90 -->
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.tpl_namespace_root V0.3.12 -->
+# sys_core_sh 0.3.6
 
 [![GitLab develop](https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/develop?logo=python)](
     https://gitlab.com/ae-group/ae_sys_core_sh)
 [![LatestPyPIrelease](
-    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.2.5?logo=python)](
-    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.2.5)
+    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.5?logo=python)](
+    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.5)
 [![PyPIVersions](https://img.shields.io/pypi/v/ae_sys_core_sh)](
     https://pypi.org/project/ae-sys-core-sh/#history)
 
@@ -71,5 +71,5 @@ https://gitlab.com/ae-group/ae_sys_core_sh/-/blob/develop/CONTRIBUTING.rst)
 
 information on the features and usage of this portion are available at
 [ReadTheDocs](
-https://ae.readthedocs.io/en/latest/_autosummary/ae.sys_core_sh.html#module-ae.sys_core_sh
+https://ae.readthedocs.io/en/latest/_autosummary/ae.sys_core_sh.html
 "ae_sys_core_sh documentation").
