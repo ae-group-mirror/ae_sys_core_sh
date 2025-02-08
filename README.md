@@ -1,16 +1,16 @@
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae V0.3.90 -->
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.tpl_namespace_root V0.3.12 -->
-# sys_core_sh 0.3.6
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae V0.3.95 -->
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.tpl_namespace_root V0.3.14 -->
+# sys_core_sh 0.3.7
 
 [![GitLab develop](https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/develop?logo=python)](
     https://gitlab.com/ae-group/ae_sys_core_sh)
 [![LatestPyPIrelease](
-    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.5?logo=python)](
-    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.5)
+    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.6?logo=python)](
+    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.6)
 [![PyPIVersions](https://img.shields.io/pypi/v/ae_sys_core_sh)](
     https://pypi.org/project/ae-sys-core-sh/#history)
 
->ae namespace module portion sys_core_sh: SiHOT PMS system core xml interface.
+>ae_sys_core_sh module 0.3.7.
 
 [![Coverage](https://ae-group.gitlab.io/ae_sys_core_sh/coverage.svg)](
     https://ae-group.gitlab.io/ae_sys_core_sh/coverage/index.html)
