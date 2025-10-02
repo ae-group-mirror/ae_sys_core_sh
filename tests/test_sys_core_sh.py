@@ -1,11 +1,10 @@
 """ unit tests. """
 import datetime
-import pytest
 
 from ae.console import ConsoleApp
 
 # noinspection PyProtectedMember
-from ae.sys_core_sh import AvailCatInfo, SihotXmlParser, ResResponse, SihotXmlBuilder, _SihotTcpClient
+from ae.sys_core_sh import SihotXmlParser, ResResponse, SihotXmlBuilder, _SihotTcpClient
 
 
 class TestSihotTcpClient:
@@ -91,7 +90,7 @@ class TestSihotXmlBuilder:
         test_date = xml_builder.convert_value_to_xml_string(datetime.datetime.now())
         xml_builder.add_tag('DATE', test_date)
         xml_builder.end_xml()
-        cons_app.dpo('####  New XML created: ', xml_builder.xml)
+        cons_app.dpo('----  New XML created: ', xml_builder.xml)
         assert xml_builder.xml.startswith('<?xml version="1.0"')
         assert xml_builder.xml.endswith(
             '?>\n<SIHOT-Document>\n'
@@ -106,7 +105,7 @@ class TestSihotXmlBuilder:
         test_date = xml_builder.convert_value_to_xml_string(datetime.datetime.now())
         xml_builder.add_tag('DATE', test_date)
         xml_builder.end_xml()
-        cons_app.dpo('####  New XML created: ', xml_builder.xml)
+        cons_app.dpo('----  New XML created: ', xml_builder.xml)
         assert xml_builder.xml.startswith('<?xml version="1.0"')
         assert xml_builder.xml.endswith(
             '?>\n<SIHOT-Document>\n<SIHOT-XML-REQUEST>'
