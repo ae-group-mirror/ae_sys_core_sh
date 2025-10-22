@@ -1,7 +1,6 @@
 """ unit tests. """
 import datetime
 
-from ae.console import ConsoleApp
 
 # noinspection PyProtectedMember
 from ae.sys_core_sh import SihotXmlParser, ResResponse, SihotXmlBuilder, _SihotTcpClient
