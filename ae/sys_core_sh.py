@@ -23,7 +23,7 @@ import time
 import socketserver
 
 from traceback import format_exc
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Optional, Sequence, Union
 from abc import ABCMeta, abstractmethod
 
 # import xml.etree.ElementTree as Et
@@ -36,7 +36,7 @@ from ae.console import ConsoleApp                                               
 from ae.sys_core import SystemConnectorBase                                                         # type: ignore
 
 
-__version__ = '0.3.8'
+__version__ = '0.3.9'
 
 
 SDI_SH = 'Sh'                               #: Sihot System Interface Id
@@ -65,7 +65,7 @@ SDF_SH_RES_MAP = 'shMapRes'
 # SXML_DEF_ENCODING = 'utf8'
 # .. but then I get the following error in reading all the clients:
 # .. 'charmap' codec can't decode byte 0x90 in position 2: character maps to <undefined>
-# then added an output type handler to the connection (see db_core.py) which did not solve the problem (because
+# then added an output type handler to the connection (see db_core.py) which did not solve the problem, because
 # .. the db_core.py module is not using this default encoding but the one in NLS_LANG env var
 # to fix showing umlaut character correctly tried cp1252 (windows charset)
 # .. and finally this worked for all characters (because it has less undefined code points_import)
@@ -98,11 +98,12 @@ def elem_to_attr(elem: str) -> str:
     return elem.lower().replace('-', '_')
 
 
-class _SihotTcpClient:
+class _SihotTcpClient:  # pylint: disable=too-few-public-methods
     """ local sihot tcp client used by :meth:`SihotXmlBuilder.send_to_server`. """
     error_message = ""
     received_xml = ""
 
+    # pylint: disable=too-many-positional-arguments,too-many-arguments
     def __init__(self, server_ip: str, server_port: int, timeout: float = 3.6, encoding: str = 'utf-8',
                  debug_level: int = DEBUG_LEVEL_DISABLED):
         self.server_ip = server_ip
@@ -130,7 +131,7 @@ class _SihotTcpClient:
                 buf = bytes(xml, encoding=self.encoding, errors=DEF_ENCODE_ERRORS)
                 sock.sendall(buf + _TCP_END_OF_MSG_CHAR)
                 self.received_xml = self._receive_response(sock)
-        except Exception as ex:
+        except Exception as ex:     # pylint: disable=broad-exception-caught
             self.error_message = "_SihotTcpClient.send_to_server() exception: " + str(ex) \
                 + (" (sent XML=" + xml + ")" + "\n" + format_exc() if self.debug_level >= DEBUG_LEVEL_VERBOSE else "")
 
@@ -158,7 +159,7 @@ class _SihotTcpClient:
                 xml_recv += chunk
             xml_recv = xml_recv[:-1]        # remove TCP_END_OF_MSG_CHAR
 
-        except Exception as ex:
+        except Exception as ex:     # pylint: disable=broad-exception-caught
             if 10054 in ex.args:
                 # [ErrNo|WinError 10054] An existing connection was forcibly closed by the remote host
                 _handle_err_gracefully(" ErrNo=10054 (data loss is possible)")
@@ -198,7 +199,7 @@ class RequestXmlHandler(socketserver.BaseRequestHandler, metaclass=ABCMeta):
             resp = self.handle_xml(xml_recv) + _TCP_END_OF_MSG_CHAR
             self.request.sendall(resp)
 
-        except Exception as ex:
+        except Exception as ex:     # pylint: disable=broad-exception-caught
             self.error_message = "RequestXmlHandler.handle() exception='" + str(ex) + "' (XML=" + str(xml_recv) + ")"\
                                  + "\n" + format_exc()
             self.notify()
@@ -216,7 +217,7 @@ class _ThreadedServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     """ local tcp server threading mixin class used by :class:`~ae.sys_core_sh.TcpServer` class. """
 
 
-class TcpServer:
+class TcpServer:    # pylint: disable=too-few-public-methods
     """ tcp server class to process xml sent by the Sihot client. """
     def __init__(self, ip, port, cls_xml_handler, debug_level=DEBUG_LEVEL_DISABLED):
         self.debug_level = debug_level
@@ -250,7 +251,7 @@ class TcpServer:
                     index = (index + 1) % len(_DEBUG_RUNNING_CHARS)
                     print_out("Server is running " + _DEBUG_RUNNING_CHARS[index], end="\r", flush=True)
                 time.sleep(sleep_time)
-        except Exception as ex:
+        except Exception as ex:     # pylint: disable=broad-exception-caught
             print_out("Server killed with exception: ", ex)
             if self.debug_level:
                 print_out(format_exc())
@@ -260,7 +261,7 @@ class TcpServer:
 
 # XML PARSER ##############################################################################
 
-class SihotXmlParser:
+class SihotXmlParser:   # pylint: disable=too-many-instance-attributes
     """ XMLParser interface used by client to parse the responses from the Sihot server.
     """
     def __init__(self, cae: ConsoleApp):
@@ -269,7 +270,7 @@ class SihotXmlParser:
                            'MATCHCODE', 'OBJID']
         self._curr_tag = ''
         self._curr_attr = ''
-        self._elem_path: List[str] = []    # element path implemented as list stack
+        self._elem_path: list[str] = []    # element path implemented as list stack
 
         # main xml elements/items
         self.oc = ''
@@ -312,7 +313,7 @@ class SihotXmlParser:
 
     # xml parsing interface
 
-    def start(self, tag: str, _attrib: Dict[str, str]) -> Optional[str]:
+    def start(self, tag: str, _attrib: dict[str, str]) -> Optional[str]:
         """ parse next opening xml tag; called for each opening tag.
 
         :param tag:         tag string.
@@ -330,7 +331,7 @@ class SihotXmlParser:
         # collect extra info on error response (RC != '0') within the MSG tag field
         if tag[:4] in ('MSG-', "INDE", "VALU"):
             self._curr_attr = 'msg'
-            # Q&D: by simply using tag[4:] to remove MSG- prefix, INDEX will be shown as X= and VALUE as E=
+            # Q&D: by simply using tag[4:] to remove MSG-prefix, INDEX will be shown as X= and VALUE as E=
             setattr(self, self._curr_attr, getattr(self, self._curr_attr, '') + " " + tag[4:] + "=")
             return None
         return tag
@@ -406,7 +407,7 @@ class Request(SihotXmlParser):
         return self.oc
 
 
-class RoomChange(SihotXmlParser):
+class RoomChange(SihotXmlParser):   # pylint: disable=too-many-instance-attributes
     """ xml parser to process Sihot server room change notifications. """
     def __init__(self, cae: ConsoleApp):
         super().__init__(cae)
@@ -435,11 +436,11 @@ class ResChange(SihotXmlParser):
     """ xml parser to process Sihot server reservation change notifications. """
     def __init__(self, cae: ConsoleApp):
         super().__init__(cae)
-        self._base_tags.append('HN')    # def hotel ID as base tag, because is outside of 1st SIHOT-Reservation block
+        self._base_tags.append('HN')    # def hotel ID as base tag, because is outside the 1st SIHOT-Reservation block
         self.hn = None                  # added instance var to remove pycharm warning
-        self.rgr_list: List[Dict[str, Any]] = []
+        self.rgr_list: list[dict[str, Any]] = []
 
-    def start(self, tag: str, attrib: Dict[str, str]) -> None:
+    def start(self, tag: str, attrib: dict[str, str]) -> None:
         """ parser detected start tag of next/new xml element; called for each opening tag. """
         if super().start(tag, attrib) is None and tag not in ('MATCHCODE', 'OBJID'):
             return None  # processed by base class
@@ -447,13 +448,13 @@ class ResChange(SihotXmlParser):
         self.cae.dpo("ResChange.start():", self._elem_path)
 
         if tag == 'SIHOT-Reservation':
-            self.rgr_list.append(dict(rgr_ho_fk=self.hn, ResPersons=[]))
+            self.rgr_list.append({'rgr_ho_fk': self.hn, 'ResPersons': []})
         elif tag in ('FIRST-Person', 'SIHOT-Person'):       # FIRST-Person only seen in room change (CI) on first occ
             self.rgr_list[-1]['ResPersons'].append({})
 
         return None
 
-    def data(self, data: str) -> None:
+    def data(self, data: str) -> None:  # pylint: disable=too-many-statements,too-many-branches
         """ process parsed element data chunk. """
         if super().data(data) is None and self._curr_tag not in ('MATCHCODE', 'OBJID'):
             return None  # processed by base class
@@ -542,7 +543,7 @@ class AvailCatInfoResponse(SihotXmlParser):
         super().__init__(cae)
         self._curr_cat = ''
         self._curr_day = ''
-        self.avail_room_cats: Dict[str, Dict[str, Any]] = {}
+        self.avail_room_cats: dict[str, dict[str, Any]] = {}
 
     def data(self, data: str) -> Optional[str]:
         """ process parsed element data chunk. """
@@ -571,7 +572,7 @@ class CatRoomResponse(SihotXmlParser):
         self._base_tags += ('NAME', 'RN')
         self.name = None  # added to remove pycharm warning
         self.rn = None
-        self.cat_rooms: Dict[str, List[str]] = {}  # to store the dict with all key values
+        self.cat_rooms: dict[str, list[str]] = {}  # to store the dict with all key values
 
     def end(self, tag):
         """ parser detected end tag of element. """
@@ -593,7 +594,7 @@ class ConfigDictResponse(SihotXmlParser):
         self._base_tags += ('KEY', 'VALUE')  # VALUE for key value (remove from additional error info - see 'VALU')
         self.value = ''  # added to remove pycharm warning
         self.key = ''
-        self.key_values: Dict[str, str] = {}  # to store the dict with all key values
+        self.key_values: dict[str, str] = {}  # to store the dict with all key values
 
     def end(self, tag: str) -> Optional[str]:
         """ parser detected end tag of Sihot config element. """
@@ -633,7 +634,7 @@ class SihotXmlBuilder:
         :param use_kernel:      pass True to use the Sihot kernel interface (False==use Sihot sxml interface).
         """
         self.cae = cae
-        self.debug_level = cae.get_opt('debug_level')
+        self.debug_level = cae.get_option('debug_level')
         self.use_kernel_interface = use_kernel
         self.response: Optional[SihotXmlParser] = None
 
@@ -646,7 +647,7 @@ class SihotXmlBuilder:
         :param add_inner_xml:           inner xml block/elements.
         :param transaction_number:      Sihot transaction number string.
         """
-        enc = self.cae.get_opt(SDF_SH_XML_ENCODING) or ""
+        enc = self.cae.get_option(SDF_SH_XML_ENCODING) or ""
         if enc:
             enc = f' encoding="{enc.lower()}"'
         self._xml = f'<?xml version="1.0"{enc}?>\n<SIHOT-Document>\n'
@@ -681,12 +682,12 @@ class SihotXmlBuilder:
         :param response_parser:     used parser to parse the response from the Sihot server (def=SihotXmlParser).
         :return:                    error string or empty string if no errors occurred.
         """
-        stc = _SihotTcpClient(self.cae.get_opt(SDF_SH_SERVER_ADDRESS),
-                              self.cae.get_opt(SDF_SH_KERNEL_PORT if self.use_kernel_interface else SDF_SH_WEB_PORT),
-                              timeout=self.cae.get_opt(SDF_SH_TIMEOUT),
-                              encoding=self.cae.get_opt(SDF_SH_XML_ENCODING),
+        stc = _SihotTcpClient(self.cae.get_option(SDF_SH_SERVER_ADDRESS),
+                              self.cae.get_option(SDF_SH_KERNEL_PORT if self.use_kernel_interface else SDF_SH_WEB_PORT),
+                              timeout=self.cae.get_option(SDF_SH_TIMEOUT),
+                              encoding=self.cae.get_option(SDF_SH_XML_ENCODING),
                               debug_level=self.debug_level)
-        self.cae.dpo("SihotXmlBuilder.send_to_server(): resp_parser={}\nxml=\n{}".format(response_parser, self.xml))
+        self.cae.dpo(f"SihotXmlBuilder.send_to_server(): resp_parser={response_parser}\nxml=\n{self.xml}")
         err_msg = stc.send_to_server(self.xml)
         if not err_msg:
             self.response = response_parser or SihotXmlParser(self.cae)
@@ -695,15 +696,15 @@ class SihotXmlBuilder:
             if err_num != '0':
                 err_msg = self.response.server_err_msg()
                 if err_msg:
-                    err_msg = "msg='{}'".format(err_msg)
+                    err_msg = f"msg='{err_msg}'"
                 elif err_num == '29':
                     err_msg = "No Reservations Found"
                 if err_num != '1' or self.debug_level >= DEBUG_LEVEL_VERBOSE:
-                    err_msg += "; sent xml='{}'; got xml='{}'".format(self.xml, stc.received_xml)[0 if err_msg else 2:]
-                err_msg = "server return code {} {}".format(err_num, err_msg)
+                    err_msg += f"; sent xml='{self.xml}'; got xml='{stc.received_xml}'"[0 if err_msg else 2:]
+                err_msg = f"server return code {err_num} {err_msg}"
 
         if err_msg:
-            self.cae.po("****  SihotXmlBuilder.send_to_server() error: {}".format(err_msg))
+            self.cae.po(f"****  SihotXmlBuilder.send_to_server() error: {err_msg}")
         return err_msg
 
     @staticmethod
@@ -871,7 +872,7 @@ class ResKernelGet(SihotXmlBuilder):
     def __init__(self, cae: ConsoleApp):
         super().__init__(cae, use_kernel=True)
 
-    def fetch_res_no(self, obj_id: str, scope='GET') -> Tuple[Any, ...]:
+    def fetch_res_no(self, obj_id: str, scope='GET') -> tuple[Any, ...]:
         """ determine reservation and guest data for the passed reservation object id.
 
         :param obj_id:      Sihot reservation object id.
@@ -879,19 +880,19 @@ class ResKernelGet(SihotXmlBuilder):
         :return:            either the reservation ids as tuple of (hotel_id, res_id, sub_id, gds_no)
                             or the tuple (None, "error") if the reservation was not found.
         """
-        msg = "ResKernelGet.fetch_res_no({}, {}) ".format(obj_id, scope)
+        msg = f"ResKernelGet.fetch_res_no({obj_id}, {scope}) "
         self.beg_xml(operation_code='RESERVATION-GET')
         self.add_tag('RESERVATION-PROFILE', self.new_tag('OBJID', obj_id) + self.new_tag('SCOPE', scope))
         self.end_xml()
 
         err_msg = self.send_to_server(response_parser=ResKernelResponse(self.cae))
         if not err_msg and isinstance(self.response, ResKernelResponse):
-            res_data: Tuple[Any, ...] = (
+            res_data: tuple[Any, ...] = (
                 self.response.hn, self.response.res_nr, self.response.sub_nr, self.response.gds_nr)
-            self.cae.dpo(msg + "res_no={};\nxml=\n{}".format(res_data, self.xml))
+            self.cae.dpo(msg + f"res_no={res_data};\nxml=\n{self.xml}")
         else:
             res_data = (None, err_msg)
-            self.cae.po(msg + "error='{}'".format(err_msg))
+            self.cae.po(msg + f"error='{err_msg}'")
         return res_data
 
 
@@ -908,7 +909,7 @@ class ShSysConnector(SystemConnectorBase):
         :param match_fields:    tuple/list of length 1 with the match field name.
         :return:                match field name or an error message if an error occurred.
         """
-        msg = "ShSysConnector.clients_match_field_init({}) expects ".format(match_fields)
+        msg = f"ShSysConnector.clients_match_field_init({match_fields}) expects "
         supported_match_fields = [SH_DEF_SEARCH_FIELD, 'AcuId', 'Surname', 'Email']
 
         if match_fields:
@@ -916,7 +917,7 @@ class ShSysConnector(SystemConnectorBase):
             if len(match_fields) > 1:
                 return msg + "single match field"
             if match_field not in supported_match_fields:
-                return "only one of the match fields {} (not {})".format(supported_match_fields, match_field)
+                return f"only one of the match fields {supported_match_fields} (not {match_field})"
         else:
             match_field = SH_DEF_SEARCH_FIELD
 
