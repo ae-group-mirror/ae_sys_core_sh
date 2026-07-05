@@ -1,16 +1,16 @@
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae v0.3.101 -->
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.namespace_root_tpls v0.3.22 -->
-# sys_core_sh 0.3.9
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae v0.3.104 -->
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.namespace_root_tpls v0.3.31 -->
+# sys_core_sh 0.3.10
 
 [![GitLab develop](https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/develop?logo=python)](
     https://gitlab.com/ae-group/ae_sys_core_sh)
 [![LatestPyPIrelease](
-    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.9?logo=python)](
-    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.9)
+    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.10?logo=python)](
+    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.10)
 [![PyPIVersions](https://img.shields.io/pypi/v/ae_sys_core_sh)](
     https://pypi.org/project/ae-sys-core-sh/#history)
 
->ae namespace module portion sys_core_sh: SiHOT PMS system core xml interface.
+>ae namespace module portion sys_core_sh: SiHOT PMS system core XML interface.
 
 [![Coverage](https://ae-group.gitlab.io/ae_sys_core_sh/coverage.svg)](
     https://ae-group.gitlab.io/ae_sys_core_sh/coverage/index.html)
@@ -35,8 +35,8 @@
     https://pypi.org/project/ae-sys-core-sh/#files)
 
 
-## installation
 
+## installation
 
 execute the following command to install the
 ae.sys_core_sh module
@@ -54,13 +54,17 @@ following command in the root folder of this repository
 (ae_sys_core_sh):
 
 ```shell script
-pip install -e .[dev]
+pip install --editable .[dev]
 ```
 
-the last command will install this module portion, along with the tools you need
-to develop and run tests or to extend the portion documentation. to contribute only to the unit tests or to the
-documentation of this portion, replace the setup extras key `dev` in the above command with `tests` or `docs`
-respectively.
+this command installs this module portion project
+along with the necessary tools to modify the source code,
+run unit tests, and build documentation. to install only
+the dependencies required for a specific task,  replace
+`dev` with one of the following:
+
+    * `tests`: for contributing to the unit test suite
+    * `docs`: for maintaining and building documentation
 
 more detailed explanations on how to contribute to this project
 [are available here](
@@ -69,7 +73,9 @@ https://gitlab.com/ae-group/ae_sys_core_sh/-/blob/develop/CONTRIBUTING.rst)
 
 ## namespace portion documentation
 
-information on the features and usage of this portion are available at
+the documentation of the source code of this portion is available at
 [ReadTheDocs](
 https://ae.readthedocs.io/en/latest/_autosummary/ae.sys_core_sh.html
 "ae_sys_core_sh documentation").
+
+
