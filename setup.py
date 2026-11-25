@@ -1,15 +1,14 @@
-# THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.project_tpls v0.3.79
+# THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.project_tpls v0.3.109
 """ setup of ae namespace module portion sys_core_sh: SiHOT PMS system core XML interface. """
-import sys
-# noinspection PyUnresolvedReferences
 import pathlib
-# noinspection PyUnresolvedReferences
+import sys
+from typing import Any
 import setuptools
 
 
 print("SetUp " + __name__ + ": " + sys.executable + str(sys.argv) + f" {sys.path=}")
 
-setup_kwargs = {
+setup_kwargs: dict[str, Any] = {
     'author': 'AndiEcker',
     'author_email': 'aecker2@gmail.com',
     'classifiers': [
@@ -25,16 +24,16 @@ setup_kwargs = {
     'description': 'ae namespace module portion sys_core_sh: SiHOT PMS system core XML interface',
     'extras_require': {
         'dev': [
-            'aedev_project_tpls',
             'ae_ae',
+            'aedev_project_tpls',
             'anybadge',
             'flake8',
             'mypy',
             'pylint',
             'pytest',
             'pytest-cov',
-            'typing',
             'types-setuptools',
+            'typing',
         ],
         'docs': [],
         'tests': [
@@ -78,10 +77,10 @@ setup_kwargs = {
     },
     'python_requires': '>=3.12',
     'url': 'https://gitlab.com/ae-group/ae_sys_core_sh',
-    'version': '0.3.10',
+    'version': '0.3.11',
     'zip_safe': True,
 }
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     setuptools.setup(**setup_kwargs)
-    pass
+    ...
