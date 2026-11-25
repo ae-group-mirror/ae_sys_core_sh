@@ -1,12 +1,12 @@
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae v0.3.104 -->
-<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.namespace_root_tpls v0.3.31 -->
-# sys_core_sh 0.3.10
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project ae.ae v0.3.110 -->
+<!-- THIS FILE IS EXCLUSIVELY MAINTAINED by the project aedev.namespace_root_tpls v0.3.33 -->
+# sys_core_sh 0.3.11
 
 [![GitLab develop](https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/develop?logo=python)](
     https://gitlab.com/ae-group/ae_sys_core_sh)
 [![LatestPyPIrelease](
-    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.10?logo=python)](
-    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.10)
+    https://img.shields.io/gitlab/pipeline/ae-group/ae_sys_core_sh/release0.3.11?logo=python)](
+    https://gitlab.com/ae-group/ae_sys_core_sh/-/tree/release0.3.11)
 [![PyPIVersions](https://img.shields.io/pypi/v/ae_sys_core_sh)](
     https://pypi.org/project/ae-sys-core-sh/#history)
 
